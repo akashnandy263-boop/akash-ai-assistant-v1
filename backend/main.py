@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from ai import ask_ai
+from backend.ai import ask_ai
 
 app = FastAPI(
     title="Akash AI API",
