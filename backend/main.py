@@ -1,5 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+
+from ai import ask_ai
 
 app = FastAPI(
     title="Akash AI API",
@@ -14,6 +17,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+class ChatRequest(BaseModel):
+    message: str
 
 
 @app.get("/")
@@ -41,4 +48,23 @@ def features():
         "web_search": True,
         "music": True,
         "file_analysis": True
+    }
+
+
+@app.post("/api/chat")
+def chat(request: ChatRequest):
+    message = request.message.strip()
+
+    if not message:
+        raise HTTPException(
+            status_code=400,
+            detail="Message cannot be empty"
+        )
+
+    answer = ask_ai(message)
+
+    return {
+        "success": True,
+        "message": message,
+        "answer": answer
     }
